@@ -1,0 +1,27 @@
+#数据库连接
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/goods?useSSL=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+    #注意这不是data-username/data-password,否则报错
+    password: 20020826
+  #模板样式缓存关闭
+  thymeleaf:
+    cache: false
+  #热部署
+  devtools:
+    restart:
+      enabled: true
+  #页面不加载缓存，修改及时生效
+  freemarker:
+    cache: false
+
+#打印日志,这个不需要配置
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  type-aliases-package: com.billy.pojo
+
+server:
+  port: 80

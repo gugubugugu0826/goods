@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Home</title>
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="vendor/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome CSS-->
+    <link rel="stylesheet" href="vendor/font-awesome/css/font-awesome.min.css">
+    <!-- Fontastic Custom icon font-->
+    <link rel="stylesheet" href="css/fontastic.css">
+    <!-- Google fonts - Poppins -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="css/style.default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="img/favicon.ico">
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.js"></script>
+</head>
+<body>
+<div class="page">
+    <!-- header navbar-->
+    <div th:replace="~{admin_common::headerbar}"></div>
+    <div class="page-content d-flex align-items-stretch">
+        <!-- Side Navbar -->
+        <div th:replace="admin_common::sidebar(activeUrl='teacher_index.html')"></div>
+        <div class="content-inner">
+            <!-- Page Header-->
+            <header class="page-header">
+                <div class="container-fluid">
+                    <h2 class="no-margin-bottom">主页/商品信息</h2>
+                </div>
+            </header>
+            <!-- Main Body-->
+            <section class="tables">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center">
+                                    <h3 class="h4">商品信息</h3>
+                                </div>
+                                <div class="card-header custom-control-inline">
+                                    <div>
+                                        <button th:if="${session.admin.admin==1}" class="btn btn-success" data-target="#myModal1" data-toggle="modal">
+                                            <span class="icon-bill"></span>
+                                            新增
+                                        </button>
+                                        <a class="btn btn-waring" href="/export">
+                                            <span class="icon-bill"></span>
+                                            导出
+                                        </a>
+                                    </div>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <form class="form-inline" method="post" action="/queryUsers">
+                                        <div class="form-group">
+                                            <label for="inlineFormInput" class="sr-only"></label>
+                                            <input name="brand" id="inlineFormInput" type="text"
+                                                   placeholder="品牌"
+                                                   class="mr-3 form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inlineFormInput" class="sr-only"></label>
+                                            <input name="type" type="text"
+                                                   placeholder="类型"
+                                                   class="mr-3 form-control">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="submit" name="Submit" value="搜索" class="mr-3 btn btn-primary">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-striped" style="text-align: center">
+                                            <thead>
+                                            <tr>
+                                                <th>名称</th>
+                                                <th>品牌</th>
+                                                <th>浏览量</th>
+                                                <th>价格</th>
+                                                <th>交易人数</th>
+                                                <th>转化率</th>
+                                                <th>交易时间</th>
+                                                <th>类型</th>
+                                                <th>省份</th>
+                                                <th>成交商品数</th>
+                                                <th>操作</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="class:${list}">
+                                                <td scope="row" th:text="${class.goodsname}"></td>
+                                                <td scope="row" th:text="${class.brand}"></td>
+                                                <td scope="row" th:text="${class.views}"></td>
+                                                <td scope="row" th:text="${class.price}"></td>
+                                                <td scope="row" th:text="${class.transactions}"></td>
+                                                <td scope="row" th:text="${class.rate}"></td>
+                                                <td scope="row" th:text="${class.time}"></td>
+                                                <td scope="row" th:text="${class.type}"></td>
+                                                <td scope="row" th:text="${class.province}"></td>
+                                                <td scope="row" th:text="${class.goodsnumber}"></td>
+                                                <td th:if="${session.admin.admin==1}">
+                                                    <button class="btn btn-danger"
+                                                            th:data-id="${class.id}"
+                                                            onclick="getClass(this.getAttribute('data-id'))">
+                                                        删除
+                                                    </button>
+                                                    <button class="btn btn-success"
+                                                            th:data-id="${class.id}"
+                                                            onclick="getTeaching(this.getAttribute('data-id'))">
+                                                        修改
+                                                    </button>
+                                                </td>
+                                                <td th:if="${session.admin.admin==0}"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<!-- Modal1-->
+<div id="myModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true"
+     class="modal fade text-left">
+    <div role="document" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="exampleModalLabel1" class="modal-title">添加商品</h5>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <form method="post" action="#">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>商品名称</label>
+                        <label for="name"></label><input placeholder="例如：1" id="name" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>品牌</label>
+                        <label for="desc"></label><input placeholder="例如：123123" id="desc" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>浏览量</label>
+                        <label></label><input placeholder="例如：100" id="views" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>价格</label>
+                        <label></label><input placeholder="例如：30.00" id="price" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>交易人数</label>
+                        <label></label><input placeholder="例如：100" id="transactions" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>转化率</label>
+                        <label></label><input placeholder="例如：100" id="rate" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>交易时间</label>
+                        <label></label><input placeholder="例如：2022-02-02" id="time" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>商品类型</label>
+                        <label></label><input placeholder="例如：1" id="type" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>省份</label>
+                        <label></label><input placeholder="例如：2" id="province" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>成交商品数</label>
+                        <label></label><input placeholder="例如：3" id="goodsnumber" type="text" class="form-control">
+                    </div>
+                </div>
+                </form>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-secondary">取消</button>
+                <button id="addGoods" type="button" class="btn btn-primary" onclick="addBookByTea()">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true"
+     class="modal fade text-left">
+    <div role="document" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="exampleModalLabel2" class="modal-title">删除用户</h5>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <form method="post" action="#">
+                <div class="modal-body">
+                    <input id="classId" name="id" type="hidden"/>
+                    <div class="form-group">
+                        <h4 style="color: red">是否删除该商品？</h4>
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-secondary">取消</button>
+                <button id="deleteUser" type="button" class="btn btn-primary" onclick="deleteClass()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="myModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+     class="modal fade text-left">
+    <div role="document" class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="exampleModalLabel" class="modal-title">更新</h5>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                        aria-hidden="true">×</span></button>
+            </div>
+            <form method="post" action="#" id="myForm">
+                <input type="hidden" id="uid">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>商品名称</label>
+                        <label></label><input placeholder="例如：1" id="uname" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>品牌</label>
+                        <label></label><input placeholder="例如：123123" id="udesc" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>浏览量</label>
+                        <label></label><input placeholder="例如：100" id="uviews" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>价格</label>
+                        <label></label><input placeholder="例如：30.00" id="uprice" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>交易人数</label>
+                        <label></label><input placeholder="例如：100" id="utransactions" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>转化率</label>
+                        <label></label><input placeholder="例如：100" id="urate" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>交易时间</label>
+                        <label></label><input placeholder="例如：2022-02-02" id="utime" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>商品类型</label>
+                        <label></label><input placeholder="例如：1" id="utype" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>省份</label>
+                        <label></label><input placeholder="例如：2" id="uprovince" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>成交商品数</label>
+                        <label></label><input placeholder="例如：3" id="ugoodsnumber" type="text" class="form-control">
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-secondary">取消</button>
+                <button id="addCar" type="button" class="btn btn-primary" onclick="updateTm()">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    function getClass(classId) {
+        $("#classId").val(classId);
+        $('#myModal2').modal('show');
+    }
+
+    function deleteClass() {
+        let classId = $("#classId").val();
+        $.ajax({
+            url:"/deleteUsers",
+            data:{"id":classId},
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                $("#myModal2").modal('hide');
+                alert(data.msg);
+                $(window).attr("location", "/queryUsers");
+            }
+        })
+    }
+
+    function getTeaching(id,datamsg) {
+        $.ajax({
+            url: "/queryUsersById",
+            type: "POST",
+            dataType: "json",
+            data: {"id": id},
+            success: function (data) {
+                console.log(data);
+                //传至前端隐藏输入框
+                $('#uid').val(data.id);
+                $("#uname").val(data.goodsname);
+                $("#udesc").val(data.brand);
+                $("#uviews").val(data.views);
+                $("#uprice").val(data.price);
+                $("#utransactions").val(data.transactions);
+                $("#urate").val(data.rate);
+                $("#utime").val(data.time);
+                $("#utype").val(data.type);
+                $("#uprovince").val(data.province);
+                $("#ugoodsnumber").val(data.goodsnumber);
+                $('#myModal3').modal('show');
+            }
+        });
+    }
+
+    function updateTm(){
+        var id = $('#uid').val();
+        let name = $("#uname").val();
+        let desc = $("#udesc").val();
+        let views = $("#uviews").val();
+        let price = $("#uprice").val();
+        let transactions = $("#utransactions").val();
+        let rate = $("#urate").val();
+        let time = $("#utime").val();
+        let type = $("#utype").val();
+        let province = $("#uprovince").val();
+        let goodsnumber = $("#ugoodsnumber").val();
+
+        $.ajax({
+            url:"/updateUsers",
+            data:{"id":id,"goodsname":name,"brand":desc,"views":views,"price":price,"transactions":transactions,"rate":rate,"time":time,"type":type,"province":province,"goodsnumber":goodsnumber},
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                $("#myModal3").modal('hide');
+                alert(data.msg);
+                $(window).attr("location", "/queryUsers");
+            }
+        })
+    }
+
+    function addBookByTea() {
+        let name = $("#name").val();
+        let desc = $("#desc").val();
+        let views = $("#views").val();
+        let price = $("#price").val();
+        let transactions = $("#transactions").val();
+        let rate = $("#rate").val();
+        let time = $("#time").val();
+        let type = $("#type").val();
+        let province = $("#province").val();
+        let goodsnumber = $("#goodsnumber").val();
+        debugger
+        $.ajax({
+            url:"/addUsers",
+            data:{"goodsname":name,"brand":desc,"views":views,"price":price,"transactions":transactions,"rate":rate,"time":time,"type":type,"province":province,"goodsnumber":goodsnumber},
+            dataType:"json",
+            type:"POST",
+            success:function (data) {
+                $("#myModal1").modal('hide');
+                alert(data.msg);
+                $(window).attr("location", "/queryUsers");
+            }
+        })
+    }
+</script>
+<!-- JavaScript files-->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/popper.js/umd/popper.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="vendor/jquery.cookie/jquery.cookie.js"></script>
+<script src="vendor/chart.js/Chart.min.js"></script>
+<script src="vendor/jquery-validation/jquery.validate.min.js"></script>
+<script src="js/charts-home.js"></script>
+<!-- Main File-->
+<script src="js/front.js"></script>
+<script src="js/classClass.js.js"></script>
+</body>
+</html>
